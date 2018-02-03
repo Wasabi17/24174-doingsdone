@@ -1,6 +1,48 @@
 <?php
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
+
+$categories = ["Все", "Входящие", "Учеба", "Работа", "Домашние дела", "Авто"];
+
+$task_list = [
+	[
+		'task' => 'Собеседование в IT-компании',
+		'date' => '01.06.2018',
+		'category' => 'Работа',
+        'done' => false
+	],
+	[
+		'task' => 'Выполнить тестовое задание',
+		'date' => '25.05.2018',
+		'category' => 'Работа',
+        'done' => false
+	],
+    [
+		'task' => 'Сделать задание первого раздела',
+		'date' => '21.04.2018',
+		'category' => 'Учеба',
+        'done' => true
+	],
+    [
+		'task' => 'Встреча с другом',
+		'date' => '22.04.2018',
+		'category' => 'Входящие',
+        'done' => false
+	],
+    [
+		'task' => 'Купить корм для кота',
+		'date' => 'Нет',
+		'category' => 'Домашние дела',
+        'done' => false
+	],
+    [
+		'task' => 'Заказать пиццу',
+		'date' => 'Нет',
+		'category' => 'Домашние дела',
+        'done' => false
+	]
+    
+];
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -45,30 +87,23 @@ $show_complete_tasks = rand(0, 1);
 
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
-                        <li class="main-navigation__list-item">
-                            <a class="main-navigation__list-item-link" href="#">Входящие</a>
+                        
+                        <?php
+                        // Вывод категорий
+                        $index = 0;
+                        $num_count = count($categories);
+                        ?>
+
+	                    <?php while($index < $num_count): ?>
+	                   
+                        <li class="main-navigation__list-item <?php if ($index == 0) print ("main-navigation__list-item--active"); ?>">
+                            <a class="main-navigation__list-item-link" href="/?cat=<?=$index;?>"><?=$categories[$index];?></a>
                             <span class="main-navigation__list-item-count">24</span>
                         </li>
+                        
+	                    <?php $index = $index + 1; ?>
+	                    <?php endwhile; ?>
 
-                        <li class="main-navigation__list-item main-navigation__list-item--active">
-                            <a class="main-navigation__list-item-link" href="#">Работа</a>
-                            <span class="main-navigation__list-item-count">12</span>
-                        </li>
-
-                        <li class="main-navigation__list-item">
-                            <a class="main-navigation__list-item-link" href="#">Здоровье</a>
-                            <span class="main-navigation__list-item-count">3</span>
-                        </li>
-
-                        <li class="main-navigation__list-item">
-                            <a class="main-navigation__list-item-link" href="#">Домашние дела</a>
-                            <span class="main-navigation__list-item-count">7</span>
-                        </li>
-
-                        <li class="main-navigation__list-item">
-                            <a class="main-navigation__list-item-link" href="#">Авто</a>
-                            <span class="main-navigation__list-item-count">0</span>
-                        </li>
                     </ul>
                 </nav>
 
@@ -94,7 +129,6 @@ $show_complete_tasks = rand(0, 1);
 
                     <label class="checkbox">
                         <a href="/">
-                           <!--добавить сюда аттрибут "checked", если переменная $show_complete_tasks равна единице-->
                             <input class="checkbox__input visually-hidden" type="checkbox" <?php if ($show_complete_tasks == 1) print ("checked"); ?>>
                             <span class="checkbox__text">Показывать выполненные</span>
                         </a>
@@ -102,13 +136,14 @@ $show_complete_tasks = rand(0, 1);
                 </div>
 
                 <table class="tasks">
-                    <!--показывать следующий тег <tr/>, если переменная $show_complete_tasks равна единице-->
+                    <!-- Вывод массива задач -->
+                    <?php foreach ($task_list as $key => $item): ?>
                     <?php if ($show_complete_tasks == 1): ?>
-                    <tr class="tasks__item task task--completed">
+                    <tr class="tasks__item task <?php if ($item['done'] == true) print ("task--completed"); ?>">
                         <td class="task__select">
                             <label class="checkbox task__checkbox">
                                 <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                                <a href="/"><span class="checkbox__text">Сделать главную страницу Дела в порядке</span></a>
+                                <a href="/"><span class="checkbox__text"><?=$item['task'];?></span></a>
                             </label>
                         </td>
 
@@ -116,9 +151,25 @@ $show_complete_tasks = rand(0, 1);
                             <a class="download-link" href="#">Home.psd</a>
                         </td>
 
-                        <td class="task__date"></td>
+                        <td class="task__date"><?=$item['date'];?></td>
+                    </tr>
+                    <?php elseif ($item['done'] == false): ?>
+                    <tr class="tasks__item task">
+                        <td class="task__select">
+                            <label class="checkbox task__checkbox">
+                                <input class="checkbox__input visually-hidden" type="checkbox" checked>
+                                <a href="/"><span class="checkbox__text"><?=$item['task'];?></span></a>
+                            </label>
+                        </td>
+
+                        <td class="task__file">
+                            <a class="download-link" href="#">Home.psd</a>
+                        </td>
+
+                        <td class="task__date"><?=$item['date'];?></td>
                     </tr>
                     <?php endif; ?>
+                    <?php endforeach; ?>
                 </table>
             </main>
         </div>
