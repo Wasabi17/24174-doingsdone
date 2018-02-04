@@ -87,22 +87,13 @@ $task_list = [
 
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
-                        
-                        <?php
-                        // Вывод категорий
-                        $index = 0;
-                        $num_count = count($categories);
-                        ?>
-
-	                    <?php while($index < $num_count): ?>
-	                   
-                        <li class="main-navigation__list-item <?php if ($index == 0) print ("main-navigation__list-item--active"); ?>">
-                            <a class="main-navigation__list-item-link" href="/?cat=<?=$index;?>"><?=$categories[$index];?></a>
+                        <!-- Вывод категорий-->
+                        <?php foreach ($categories as $key => $value): ?>
+                        <li class="main-navigation__list-item <?php if ($key == 0) print ("main-navigation__list-item--active"); ?>">
+                            <a class="main-navigation__list-item-link" href="/?cat=<?=$key;?>"><?=$value;?></a>
                             <span class="main-navigation__list-item-count">24</span>
                         </li>
-                        
-	                    <?php $index = $index + 1; ?>
-	                    <?php endwhile; ?>
+	                    <?php endforeach; ?>
 
                     </ul>
                 </nav>
@@ -138,23 +129,8 @@ $task_list = [
                 <table class="tasks">
                     <!-- Вывод массива задач -->
                     <?php foreach ($task_list as $key => $item): ?>
-                    <?php if ($show_complete_tasks == 1): ?>
-                    <tr class="tasks__item task <?php if ($item['done'] == true) print ("task--completed"); ?>">
-                        <td class="task__select">
-                            <label class="checkbox task__checkbox">
-                                <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                                <a href="/"><span class="checkbox__text"><?=$item['task'];?></span></a>
-                            </label>
-                        </td>
-
-                        <td class="task__file">
-                            <a class="download-link" href="#">Home.psd</a>
-                        </td>
-
-                        <td class="task__date"><?=$item['date'];?></td>
-                    </tr>
-                    <?php elseif ($item['done'] == false): ?>
-                    <tr class="tasks__item task">
+                    <?php if ($show_complete_tasks == 1 or ($show_complete_tasks == 0 and !$item['done'])): ?>
+                    <tr class="tasks__item task <?php if ($item['done']) print ("task--completed"); ?>">
                         <td class="task__select">
                             <label class="checkbox task__checkbox">
                                 <input class="checkbox__input visually-hidden" type="checkbox" checked>
