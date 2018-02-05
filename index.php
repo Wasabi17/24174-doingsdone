@@ -129,7 +129,7 @@ $task_list = [
                 <table class="tasks">
                     <!-- Вывод массива задач -->
                     <?php foreach ($task_list as $key => $item): ?>
-                    <?php if ($show_complete_tasks == 1 or ($show_complete_tasks == 0 and !$item['done'])): ?>
+                    <?php if ($show_complete_tasks == 1 || ($show_complete_tasks == 0 && !$item['done'])): ?>
                     <tr class="tasks__item task <?php if ($item['done']) print ("task--completed"); ?>">
                         <td class="task__select">
                             <label class="checkbox task__checkbox">
