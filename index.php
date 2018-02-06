@@ -43,6 +43,18 @@ $task_list = [
 	]
     
 ];
+// Считаем задачи в проекте
+function count_tasks ($task_list, $category) {
+  $tasks = 0;
+  if ($category == "Все") {
+    $tasks = count($task_list);
+    return $tasks;
+  }
+  foreach ($task_list as $key => $item) {
+  if ($item['category'] == $category) $tasks++;
+  }
+  return $tasks;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -91,7 +103,7 @@ $task_list = [
                         <?php foreach ($categories as $key => $value): ?>
                         <li class="main-navigation__list-item <?php if ($key == 0) print ("main-navigation__list-item--active"); ?>">
                             <a class="main-navigation__list-item-link" href="/?cat=<?=$key;?>"><?=$value;?></a>
-                            <span class="main-navigation__list-item-count">24</span>
+                            <span class="main-navigation__list-item-count"><?=count_tasks($task_list,$value);?></span>
                         </li>
 	                    <?php endforeach; ?>
 
