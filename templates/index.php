@@ -26,7 +26,7 @@
 	<!-- Вывод массива задач -->
 	<?php foreach ($task_list as $key => $item): ?>
 	<?php if ($show_complete_tasks == 1 || ($show_complete_tasks == 0 && !$item['done'])): ?>
-	<tr class="tasks__item task <?php if ($item['done']) print (" task--completed "); ?>">
+	<tr class="tasks__item task <?php if ($item['done']) print ('task--completed'); days_left($item['date']); ?>">
 		<td class="task__select">
 			<label class="checkbox task__checkbox">
         		<input class="checkbox__input visually-hidden" type="checkbox" checked>
