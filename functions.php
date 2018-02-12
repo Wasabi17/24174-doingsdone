@@ -21,13 +21,15 @@ function count_tasks ($task_list, $category) {
 	}
   	return $tasks;
 }
-//Подсчет времени задачи и вывод пометки "Срочно"
-function days_left($date) {
+//Подсчет времени задачи и проверка на срочность
+function is_important($date) {
 	if ($date != null) {
+		$isimportant = false;
 		$curdate = strtotime(date('d.m.Y'));
 		$deadline = strtotime($date);
 		$daysleft = floor($deadline-$curdate);
-		if ($daysleft <= 1) print 'task--important';
+		if ($daysleft <= 1) $isimportant = true;
+		return $isimportant;
 	}
 }
 ?>
