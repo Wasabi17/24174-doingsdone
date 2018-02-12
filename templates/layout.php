@@ -43,12 +43,16 @@
                     <ul class="main-navigation__list">
                         <!-- Вывод категорий-->
                         <?php foreach ($categories as $key => $value): ?>
-                        <li class="main-navigation__list-item <?php if ($key == 0) print ("main-navigation__list-item--active"); ?>">
-                            <a class="main-navigation__list-item-link" href="/?cat=<?=$key;?>"><?=$value;?></a>
-                            <span class="main-navigation__list-item-count"><?=count_tasks($task_list,$value);?></span>
-                        </li>
+                        	<li class="main-navigation__list-item 
+                           		<?php 
+									if ($key == 0) { 
+										print ("main-navigation__list-item--active"); 
+									}
+						   		?>">
+                        		<a class="main-navigation__list-item-link" href="/?cat=<?=$key;?>"><?=$value;?></a>
+                        		<span class="main-navigation__list-item-count"><?=count_tasks($task_list,$value);?></span>
+                        	</li>
 	                    <?php endforeach; ?>
-
                     </ul>
                 </nav>
 

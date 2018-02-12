@@ -1,4 +1,7 @@
 <?php
+
+date_default_timezone_set("Europe/Moscow");
+	
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
 
@@ -13,7 +16,7 @@ $task_list = [
 	],
 	[
 		'task' => 'Выполнить тестовое задание',
-		'date' => '25.05.2018',
+		'date' => '11.02.2018',
 		'category' => 'Работа',
         'done' => false
 	],
@@ -31,13 +34,13 @@ $task_list = [
 	],
     [
 		'task' => 'Купить корм для кота',
-		'date' => 'Нет',
+		'date' => '',
 		'category' => 'Домашние дела',
         'done' => false
 	],
     [
 		'task' => 'Заказать пиццу',
-		'date' => 'Нет',
+		'date' => '',
 		'category' => 'Домашние дела',
         'done' => false
 	]
