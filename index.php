@@ -49,9 +49,29 @@ $task_list = [
 
 require_once('functions.php');
 
+//Ищем id категории в адресной строке
+$cat = null;
+
+if (isset($_GET['cat'])) {
+	$cat_id = $_GET['cat'];
+
+	foreach ($categories as $key => $value) {
+		if ($key == $cat_id)  {
+			$cat = $key;
+			break;
+		}
+	}
+}
+
+if (!$cat) {
+	http_response_code(404);
+}
+			
 $page_content = include_template('index.php', [
 	'task_list' => $task_list,
-	'show_complete_tasks' => $show_complete_tasks
+	'show_complete_tasks' => $show_complete_tasks,
+	'cat' => $cat,
+	'categories' => $categories
 ]);
 
 $layout_content = include_template('layout.php', [
