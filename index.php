@@ -54,24 +54,28 @@ $cat = null;
 
 if (isset($_GET['cat'])) {
 	$cat_id = $_GET['cat'];
+	if (isset($categories[$cat_id])) {
+		$cat = $cat_id;
+	} else {
+		http_response_code(404);
+		die();
+	}
+	
+}
 
-	foreach ($categories as $key => $value) {
-		if ($key == $cat_id)  {
-			$cat = $key;
-			break;
-		}
+//Определяем задачи для показа на странице
+$task_list_show=[];
+
+foreach ($task_list as $key => $item) {
+	if (($show_complete_tasks == 1 || ($show_complete_tasks == 0 && !$item['done'])) && ((isset($cat) && $item['category'] == $categories[$cat]) || $cat==0)) {
+		array_push($task_list_show, $task_list[$key]);
 	}
 }
 
-if (!$cat) {
-	http_response_code(404);
-}
-			
+//Выводим контент
 $page_content = include_template('index.php', [
-	'task_list' => $task_list,
-	'show_complete_tasks' => $show_complete_tasks,
-	'cat' => $cat,
-	'categories' => $categories
+	'task_list_show' => $task_list_show,
+	'show_complete_tasks' => $show_complete_tasks
 ]);
 
 $layout_content = include_template('layout.php', [
@@ -79,7 +83,8 @@ $layout_content = include_template('layout.php', [
 	'task_list' => $task_list, 
 	'categories' => $categories, 
 	'title' => 'Дела в порядке - главная',
-	'user' => 'Андрей'
+	'user' => 'Андрей',
+	'cat' => $cat
 ]);
 
 print($layout_content);

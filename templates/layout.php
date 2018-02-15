@@ -45,7 +45,7 @@
                         <?php foreach ($categories as $key => $value): ?>
                         	<li class="main-navigation__list-item 
                            		<?php 
-									if ($key == 0) { 
+									if ($key == $cat) { 
 										print ("main-navigation__list-item--active"); 
 									}
 						   		?>">
