@@ -66,9 +66,21 @@ if (isset($_GET['cat'])) {
 //Определяем задачи для показа на странице
 $task_list_show=[];
 
-foreach ($task_list as $key => $item) {
-	if (($show_complete_tasks == 1 || ($show_complete_tasks == 0 && !$item['done'])) && ((isset($cat) && $item['category'] == $categories[$cat]) || $cat==0)) {
-		array_push($task_list_show, $task_list[$key]);
+if ($cat == 0) {
+	if ($show_complete_tasks == 1) {
+		$task_list_show = $task_list;
+	} else {
+		foreach ($task_list as $key => $item) {
+			if (!$item['done'])  {
+				array_push($task_list_show, $task_list[$key]);
+			}
+		}
+	} 
+} else {
+	foreach ($task_list as $key => $item) {
+		if (($item['category'] == $categories[$cat] && !$item['done'] && $show_complete_tasks == 0) || ($item['category'] == $categories[$cat] && $show_complete_tasks == 1))  {
+			array_push($task_list_show, $task_list[$key]);
+		}
 	}
 }
 
