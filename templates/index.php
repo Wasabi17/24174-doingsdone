@@ -24,8 +24,7 @@
 
 <table class="tasks">
 	<!-- Вывод массива задач -->
-	<?php foreach ($task_list as $key => $item): ?>
-	<?php if ($show_complete_tasks == 1 || ($show_complete_tasks == 0 && !$item['done'])): ?>
+	<?php foreach ($task_list_show as $key => $item): ?>
 	<tr class="tasks__item task 
 	<?php 
 		if ($item['done']) {
@@ -50,6 +49,5 @@
 			<?=$item['date'];?>
 		</td>
 	</tr>
-	<?php endif; ?>
 	<?php endforeach; ?>
 </table>

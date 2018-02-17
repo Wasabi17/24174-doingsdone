@@ -14,7 +14,7 @@
 <div class="page-wrapper">
     <div class="container container--with-sidebar">
         <header class="main-header">
-            <a href="#">
+            <a href="/">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
             </a>
 
@@ -45,7 +45,7 @@
                         <?php foreach ($categories as $key => $value): ?>
                         	<li class="main-navigation__list-item 
                            		<?php 
-									if ($key == 0) { 
+									if ($key == $cat) { 
 										print ("main-navigation__list-item--active"); 
 									}
 						   		?>">

@@ -49,8 +49,44 @@ $task_list = [
 
 require_once('functions.php');
 
+//Ищем id категории в адресной строке
+$cat = null;
+
+if (isset($_GET['cat'])) {
+	$cat_id = $_GET['cat'];
+	if (isset($categories[$cat_id])) {
+		$cat = $cat_id;
+	} else {
+		http_response_code(404);
+		die();
+	}
+	
+}
+
+//Определяем задачи для показа на странице
+$task_list_show=[];
+
+if ($cat == 0) {
+	if ($show_complete_tasks == 1) {
+		$task_list_show = $task_list;
+	} else {
+		foreach ($task_list as $key => $item) {
+			if (!$item['done'])  {
+				array_push($task_list_show, $task_list[$key]);
+			}
+		}
+	} 
+} else {
+	foreach ($task_list as $key => $item) {
+		if (($item['category'] == $categories[$cat] && !$item['done'] && $show_complete_tasks == 0) || ($item['category'] == $categories[$cat] && $show_complete_tasks == 1))  {
+			array_push($task_list_show, $task_list[$key]);
+		}
+	}
+}
+
+//Выводим контент
 $page_content = include_template('index.php', [
-	'task_list' => $task_list,
+	'task_list_show' => $task_list_show,
 	'show_complete_tasks' => $show_complete_tasks
 ]);
 
@@ -59,7 +95,8 @@ $layout_content = include_template('layout.php', [
 	'task_list' => $task_list, 
 	'categories' => $categories, 
 	'title' => 'Дела в порядке - главная',
-	'user' => 'Андрей'
+	'user' => 'Андрей',
+	'cat' => $cat
 ]);
 
 print($layout_content);
