@@ -36,4 +36,16 @@ function is_important($date) {
 		return $isimportant;
 	}
 }
-?>
+
+function is_future($date) {
+	if ($date != null) {
+		$isfuture = false;
+		$curdate = strtotime(date('d.m.Y'));
+		$deadline = strtotime($date);
+		$daysleft = floor($deadline-$curdate);
+		if ($daysleft >= 0) {
+			$isfuture = true;
+		}
+		return $isfuture;
+	}
+}

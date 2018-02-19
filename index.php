@@ -7,42 +7,52 @@ $show_complete_tasks = rand(0, 1);
 
 $categories = ["Все", "Входящие", "Учеба", "Работа", "Домашние дела", "Авто"];
 
+$categories_select = $categories;
+
+$categories_select['0'] = 'Выберите проект';
+
 $task_list = [
 	[
 		'task' => 'Собеседование в IT-компании',
 		'date' => '01.06.2018',
 		'category' => 'Работа',
-        'done' => false
+        'done' => false,
+		'file' => 'Home.psd'
 	],
 	[
 		'task' => 'Выполнить тестовое задание',
 		'date' => '11.02.2018',
 		'category' => 'Работа',
-        'done' => false
+        'done' => false,
+		'file' => ''
 	],
     [
 		'task' => 'Сделать задание первого раздела',
 		'date' => '21.04.2018',
 		'category' => 'Учеба',
-        'done' => true
+        'done' => true,
+		'file' => ''
 	],
     [
 		'task' => 'Встреча с другом',
 		'date' => '22.04.2018',
 		'category' => 'Входящие',
-        'done' => false
+        'done' => false,
+		'file' => ''
 	],
     [
 		'task' => 'Купить корм для кота',
 		'date' => '',
 		'category' => 'Домашние дела',
-        'done' => false
+        'done' => false,
+		'file' => ''
 	],
     [
 		'task' => 'Заказать пиццу',
 		'date' => '',
 		'category' => 'Домашние дела',
-        'done' => false
+        'done' => false,
+		'file' => 'Home.psd'
 	]
     
 ];
@@ -69,7 +79,9 @@ $modal_task = null;
 
 if (isset($_GET['add_task'])) {
 	$show_layout = true;
-	$modal_task = include_template('add_task.php', []);	
+	$modal_task = include_template('add_task.php', [
+		'categories_select' => $categories_select
+	]);	
 }
 
 // Обработка формы задачи
@@ -77,14 +89,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$task_new = $_POST;
 	$task_new['done'] = false;
 	$show_layout = true;
-	$required = ['task', 'category'];
+	$required = ['task'];
 	$errors = [];
 	foreach ($required as $key) {
 		if (empty($_POST[$key])) {
             $errors[$key] = 'Заполните это поле';
 		}
 	}
-
+	
+	if ($_POST['category'] == 'Выберите проект') {
+			$errors['category'] = 'Нужно выбрать проект';
+	}
+	
+	
+	if ($_POST['date'] != "") {
+		$task_new['date'] = date('d.m.Y',strtotime($_POST['date']));
+		if (!is_future($task_new['date'])) {
+			$errors['date'] = 'Дата окончания задачи должна быть в будущем';
+		} 
+	}
+		
 	if (isset($_FILES['file']['name'])) {
 		$file_path = $_FILES['file']['name'];
 		$res = move_uploaded_file($_FILES['file']['tmp_name'], 'uploads/' . $file_path);
@@ -96,7 +120,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 	if (count($errors)) {
 		$modal_task = include_template('add_task.php', [
-			'errors' => $errors
+			'errors' => $errors,
+			'categories_select' => $categories_select,
+			'task_new' => $task_new
 		]);
 	} else {
 		array_unshift($task_list, $task_new);
