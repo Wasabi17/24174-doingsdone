@@ -25,7 +25,7 @@ function count_tasks ($task_list, $category) {
 }
 //Подсчет времени задачи и проверка на срочность
 function is_important($date) {
-	if ($date != null) {
+	if ($date != "") { 
 		$isimportant = false;
 		$curdate = strtotime(date('d.m.Y'));
 		$deadline = strtotime($date);
@@ -36,4 +36,16 @@ function is_important($date) {
 		return $isimportant;
 	}
 }
-?>
+
+function is_future($date) {
+	if ($date != "") {
+		$isfuture = false;
+		$curdate = strtotime(date('d.m.Y'));
+		$deadline = strtotime($date);
+		$daysleft = floor($deadline-$curdate);
+		if ($daysleft >= 0) {
+			$isfuture = true;
+		}
+		return $isfuture;
+	}
+}

@@ -12,37 +12,43 @@ $task_list = [
 		'task' => 'Собеседование в IT-компании',
 		'date' => '01.06.2018',
 		'category' => 'Работа',
-        'done' => false
+        'done' => false,
+		'file' => 'Home.psd'
 	],
 	[
 		'task' => 'Выполнить тестовое задание',
 		'date' => '11.02.2018',
 		'category' => 'Работа',
-        'done' => false
+        'done' => false,
+		'file' => ''
 	],
     [
 		'task' => 'Сделать задание первого раздела',
 		'date' => '21.04.2018',
 		'category' => 'Учеба',
-        'done' => true
+        'done' => true,
+		'file' => ''
 	],
     [
 		'task' => 'Встреча с другом',
 		'date' => '22.04.2018',
 		'category' => 'Входящие',
-        'done' => false
+        'done' => false,
+		'file' => ''
 	],
     [
 		'task' => 'Купить корм для кота',
 		'date' => '',
 		'category' => 'Домашние дела',
-        'done' => false
+        'done' => false,
+		'file' => ''
 	],
     [
 		'task' => 'Заказать пиццу',
 		'date' => '',
 		'category' => 'Домашние дела',
-        'done' => false
+        'done' => false,
+		'file' => 'Home.psd'
 	]
     
 ];
@@ -62,6 +68,65 @@ if (isset($_GET['cat'])) {
 	}
 	
 }
+
+// Обработка кнопки Добавить задачу
+$show_layout = false;
+$modal_task = null;
+
+if (isset($_GET['add_task'])) {
+	$show_layout = true;
+	$modal_task = include_template('add_task.php', [
+		'categories' => $categories
+	]);	
+}
+
+// Обработка формы задачи
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	$task_new = $_POST;
+	$task_new['done'] = false;
+	$show_layout = true;
+	$required = ['task'];
+	$errors = [];
+	foreach ($required as $key) {
+		if (empty($_POST[$key])) {
+            $errors[$key] = 'Заполните это поле';
+		}
+	}
+	
+	if ($_POST['category'] == 'Выберите проект') {
+			$errors['category'] = 'Нужно выбрать проект';
+	}
+	
+	
+	if ($_POST['date'] != "") {
+		$task_new['date'] = date('d.m.Y',strtotime($_POST['date']));
+		if (!is_future($task_new['date'])) {
+			$errors['date'] = 'Дата окончания задачи должна быть в будущем';
+		} 
+	}
+		
+	if (isset($_FILES['file']['name'])) {
+		$file_path = $_FILES['file']['name'];
+		$res = move_uploaded_file($_FILES['file']['tmp_name'], 'uploads/' . $file_path);
+	}
+	
+	if (isset($file_path)) {
+		$task_new['file'] = $file_path;
+	}
+	
+	if (count($errors)) {
+		$modal_task = include_template('add_task.php', [
+			'errors' => $errors,
+			'categories' => $categories,
+			'task_new' => $task_new
+		]);
+	} else {
+		array_unshift($task_list, $task_new);
+		$show_layout = false;
+	}
+
+}
+
 
 //Определяем задачи для показа на странице
 $task_list_show=[];
@@ -84,6 +149,7 @@ if ($cat == 0) {
 	}
 }
 
+
 //Выводим контент
 $page_content = include_template('index.php', [
 	'task_list_show' => $task_list_show,
@@ -96,7 +162,9 @@ $layout_content = include_template('layout.php', [
 	'categories' => $categories, 
 	'title' => 'Дела в порядке - главная',
 	'user' => 'Андрей',
-	'cat' => $cat
+	'cat' => $cat,
+	'show_layout' => $show_layout,
+	'modal_task' => $modal_task
 ]);
 
 print($layout_content);

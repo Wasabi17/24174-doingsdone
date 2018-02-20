@@ -16,7 +16,11 @@
 
 	<label class="checkbox">
     	<a href="/">
-      		<input class="checkbox__input visually-hidden" type="checkbox" <?php if ($show_complete_tasks == 1) print ("checked"); ?>>
+      		<input class="checkbox__input visually-hidden" type="checkbox" 
+      		<?php if ($show_complete_tasks == 1) { 
+				print ("checked"); 
+			} 
+		    ?>>
       		<span class="checkbox__text">Показывать выполненные</span>
     	</a>
  	</label>
@@ -42,9 +46,11 @@
 		</td>
 
 		<td class="task__file">
-			<a class="download-link" href="#">Home.psd</a>
+		<?php if ($item['file'] !== '') {
+			print '<a class="download-link href="#">'.$item['file'].'</a>';
+		}
+		?>	
 		</td>
-
 		<td class="task__date">
 			<?=$item['date'];?>
 		</td>
