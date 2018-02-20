@@ -15,7 +15,7 @@
 	</nav>
 
 	<label class="checkbox">
-    	<a href="/">
+    	<a href="?show_completed">
       		<input class="checkbox__input visually-hidden" type="checkbox" 
       		<?php if ($show_complete_tasks == 1) { 
 				print ("checked"); 

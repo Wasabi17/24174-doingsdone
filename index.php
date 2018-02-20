@@ -3,7 +3,26 @@
 date_default_timezone_set("Europe/Moscow");
 	
 // показывать или нет выполненные задачи
-$show_complete_tasks = rand(0, 1);
+$show_complete_tasks = 0;
+$show_complete_tasks_cookie = "showcompl";
+$showcompl_value = 0;
+$expire = strtotime("+30 days");
+$path = "/";
+
+if (isset($_GET['show_completed'])) {
+	if (isset($_COOKIE['showcompl'])) {
+		$showcompl_value = $_COOKIE['showcompl'] == 0 ? 1 : 0;
+		$show_complete_tasks = $showcompl_value; 
+	} else {
+		$showcompl_value = 1;	
+		$show_complete_tasks = $showcompl_value;
+	}
+	setcookie($show_complete_tasks_cookie, $showcompl_value, $expire, $path);
+} else {
+	if (isset($_COOKIE['showcompl'])) {
+	 $show_complete_tasks = $_COOKIE['showcompl'];
+}
+}
 
 $categories = ["Все", "Входящие", "Учеба", "Работа", "Домашние дела", "Авто"];
 
