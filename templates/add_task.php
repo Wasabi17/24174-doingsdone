@@ -23,7 +23,8 @@
 			
 			<label class="form__label" for="category">Проект <sup>*</sup></label>
 			<select class="form__input form__input--select <?=$errorclass;?>" name="category" id="category">
-       			<?php foreach ($categories_select as $value): ?>      
+      			<option value="Выберите проект">Выберите проект</option>
+       			<?php foreach (array_slice($categories,1) as $value): ?>      
         			<option 
         			<?php if (isset($errors) && $value == $inputvalue) {
 						print 'selected';

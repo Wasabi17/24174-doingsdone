@@ -7,10 +7,6 @@ $show_complete_tasks = rand(0, 1);
 
 $categories = ["Все", "Входящие", "Учеба", "Работа", "Домашние дела", "Авто"];
 
-$categories_select = $categories;
-
-$categories_select['0'] = 'Выберите проект';
-
 $task_list = [
 	[
 		'task' => 'Собеседование в IT-компании',
@@ -80,7 +76,7 @@ $modal_task = null;
 if (isset($_GET['add_task'])) {
 	$show_layout = true;
 	$modal_task = include_template('add_task.php', [
-		'categories_select' => $categories_select
+		'categories' => $categories
 	]);	
 }
 
@@ -121,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (count($errors)) {
 		$modal_task = include_template('add_task.php', [
 			'errors' => $errors,
-			'categories_select' => $categories_select,
+			'categories' => $categories,
 			'task_new' => $task_new
 		]);
 	} else {
