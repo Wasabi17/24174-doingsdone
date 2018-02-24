@@ -25,23 +25,29 @@
             </a>
 
             <div class="main-header__side">
+               <?php if (isset($_SESSION['user'])) :?>
                 <a class="main-header__side-item button button--plus" href="?add_task">Добавить задачу</a>
 
                 <div class="main-header__side-item user-menu">
+                   
                     <div class="user-menu__image">
                         <img src="img/user-pic.jpg" width="40" height="40" alt="Пользователь">
                     </div>
 
                     <div class="user-menu__data">
-                        <p><?=$user;?></p>
+                        <p><?=$user['name'];?></p>
 
-                        <a href="#">Выйти</a>
+                        <a href="?logout">Выйти</a>
                     </div>
                 </div>
+                <?php else :?>
+                <a class="main-header__side-item button button--transparent" href="?login">Войти</a> 
+                <?php endif; ?>
             </div>
         </header>
-
+		
         <div class="content">
+            <?php if (isset($_SESSION['user'])) :?>
             <section class="content__side">
                 <h2 class="content__side-heading">Проекты</h2>
 
@@ -64,7 +70,7 @@
 
                 <a class="button button--transparent button--plus content__side-button" href="">Добавить проект</a>
             </section>
-
+			<?php endif; ?>
             <main class="content__main">
                 <?=$content;?>
             </main>
@@ -72,6 +78,7 @@
     </div>
 </div>
 <?=$modal_task;?>
+<?=$modal_login;?>
 <footer class="main-footer">
     <div class="container">
         <div class="main-footer__copyright">
@@ -79,9 +86,9 @@
 
             <p>Веб-приложение для удобного ведения списка дел.</p>
         </div>
-
+		<?php if (isset($_SESSION['user'])) :?>
         <a class="main-footer__button button button--plus" href="?add_task">Добавить задачу</a>
-
+		<?php endif; ?>
         <div class="main-footer__social social">
             <span class="visually-hidden">Мы в соцсетях:</span>
             <a class="social__link social__link--facebook" href="#">Facebook
