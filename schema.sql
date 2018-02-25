@@ -10,7 +10,7 @@ CREATE TABLE users (
 CREATE TABLE category (
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	name CHAR(128),
-	author CHAR(128) 
+	user_id INT 
 );
 
 CREATE TABLE tasks (
@@ -20,12 +20,13 @@ CREATE TABLE tasks (
 	done_date DATE,
 	deadline_date DATE,
 	file CHAR,
-	author CHAR(128),
-	category CHAR(128)
+	user_id INT,
+	category_id INT
 );
 
 CREATE UNIQUE INDEX email ON users(email);
 CREATE UNIQUE INDEX category ON category(name);
 CREATE INDEX pass ON users(password);
-CREATE INDEX c_user ON category(author);
-CREATE INDEX t_user ON tasks(author);
+CREATE INDEX c_user ON category(user_id);
+CREATE INDEX t_user ON tasks(user_id);
+CREATE INDEX t_category ON tasks(category_id);
