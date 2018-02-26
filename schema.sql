@@ -15,11 +15,11 @@ CREATE TABLE category (
 
 CREATE TABLE tasks (
 	id INT AUTO_INCREMENT PRIMARY KEY,
-	name CHAR,
+	name TEXT,
 	creation_date DATE,
 	done_date DATE,
 	deadline_date DATE,
-	file CHAR,
+	file CHAR(128),
 	user_id INT,
 	category_id INT
 );
