@@ -28,31 +28,31 @@
 
 <table class="tasks">
 	<!-- Вывод массива задач -->
-	<?php foreach ($task_list_show as $key => $item): ?>
+	<?php foreach ($task_list as $key => $item): ?>
 	<tr class="tasks__item task 
 	<?php 
-		if ($item['done']) {
+		if ($item['done_date'] !="") {
 			print ('task--completed'); 
 		} 
-		if (is_important($item['date'])) {
+		if (is_important($item['deadline_date'])) {
 			print ('task--important'); 
 		} 
 	?>">
 		<td class="task__select">
 			<label class="checkbox task__checkbox">
         		<input class="checkbox__input visually-hidden" type="checkbox" checked>
-        		<a href="/"><span class="checkbox__text"><?=$item['task'];?></span></a>
+        		<a href="/"><span class="checkbox__text"><?=$item['name'];?></span></a>
       		</label>
 		</td>
 
 		<td class="task__file">
-		<?php if ($item['file'] !== '') {
+		<?php if (($item['file'] != "")) {
 			print '<a class="download-link href="#">'.$item['file'].'</a>';
 		}
 		?>	
 		</td>
 		<td class="task__date">
-			<?=$item['date'];?>
+			<?php !is_null($item['deadline_date']) ? print date('d.m.Y',strtotime($item['deadline_date'])) : "";?>
 		</td>
 	</tr>
 	<?php endforeach; ?>

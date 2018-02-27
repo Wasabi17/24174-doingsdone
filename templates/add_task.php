@@ -3,7 +3,7 @@
 
 	<h2 class="modal__heading">Добавление задачи</h2>
 
-	<form class="form" action="index.php" method="post" enctype="multipart/form-data">
+	<form class="form" action="index.php?add_task" method="post" enctype="multipart/form-data">
 		<div class="form__row">
 		
 			<?php $errorclass = isset($errors['task']) ? "form__input--error" : ""; 
@@ -24,13 +24,13 @@
 			<label class="form__label" for="category">Проект <sup>*</sup></label>
 			<select class="form__input form__input--select <?=$errorclass;?>" name="category" id="category">
       			<option value="Выберите проект">Выберите проект</option>
-       			<?php foreach (array_slice($categories,1) as $value): ?>      
+       			<?php foreach ($categories as $key => $item): ?>      
         			<option 
-        			<?php if (isset($errors) && $value == $inputvalue) {
+        			<?php if (isset($errors) && $item['name'] == $inputvalue) {
 						print 'selected';
 					}
         			?>
-        			value="<?=$value;?>"><?=$value;?></option>
+        			value="<?=$item['id']?>"><?=$item['name']?></option>
         		<?php endforeach; ?>
       		</select>
       		<?php if (isset($errors['category'])): ?>
