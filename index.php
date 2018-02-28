@@ -4,74 +4,33 @@ date_default_timezone_set("Europe/Moscow");
 
 require_once ('init.php');
 
-// Работа с БД
-if (!$link) {
-    $error = mysqli_connect_error();
-    show_error($page_content, $error);
-}
-else {
-	// Забираем из БД юзеров
-	$sql = 'SELECT * FROM users';
-	$result = mysqli_query($link, $sql);
-	
-	if ($result) {
-        $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    }
-	 else {
-        show_error($page_content, mysqli_error($link));
-    }
-	
-}
-
 session_start();
 
 if (isset($_SESSION['user'])) {
 	
 	$user = $_SESSION['user'];
+	$user_id = $user['id'];
 	
-	$user_id = intval($user['id']);
-	
-	// Забираем из БД категории юзера
-	$sql = 'SELECT `id`, `name` FROM category WHERE user_id =' .$user_id;
-	$result = mysqli_query($link, $sql);
-    if ($result) {
-        $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    }
-	
-	// показывать или нет выполненные задачи
-	$show_complete_tasks = 0;
+	// Показывать или нет выполненные задачи
 	$show_complete_tasks_cookie = "showcompl";
-	$showcompl_value = 0;
 	$expire = strtotime("+30 days");
 	$path = "/";
+	
+	$show_complete_tasks = isset($_COOKIE['showcompl']) ? $_COOKIE['showcompl'] : 0; //Если есть кука, то записываем ее, если нет дефолтный ноль
 
 	if (isset($_GET['show_completed'])) {
-		if (isset($_COOKIE['showcompl'])) {
-			$showcompl_value = $_COOKIE['showcompl'] == 0 ? 1 : 0;
-			$show_complete_tasks = $showcompl_value; 
-		} else {
-			$showcompl_value = 1;	
-			$show_complete_tasks = $showcompl_value;
-		}
-		setcookie($show_complete_tasks_cookie, $showcompl_value, $expire, $path);
-	} else {
-		if (isset($_COOKIE['showcompl'])) {
-		 $show_complete_tasks = $_COOKIE['showcompl'];
-		}
+  		$show_complete_tasks = !$show_complete_tasks; //Инвертируем значение
+		setcookie($show_complete_tasks_cookie, $show_complete_tasks, $expire, $path);
 	}
 	
+	// Забираем из БД категории юзера c подсчетом задач
+    $categories = searchCategoriesByUser($user_id,$show_complete_tasks,$link);
+
     // Забираем задачи юзера для главной страницы и категории Все
-	if ($show_complete_tasks == 1) {
-		$sql = 'SELECT * FROM tasks WHERE user_id =' .$user_id ;
-	} else {
-		$sql = 'SELECT * FROM tasks WHERE done_date IS NULL AND user_id =' .$user_id;
+	$sql = 'SELECT * FROM tasks WHERE user_id =' .$user_id;
+	if ($show_complete_tasks == 0) {
+		$sql = $sql.' AND done_date IS NULL';
 	}
-	$result = mysqli_query($link, $sql);
-	if ($result) {
-        $task_list = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    }
-	
-	$all_tasks = $task_list; // Чтобы посчитать кол-во задач для менюшки
 	
 	//Ищем id категории в адресной строке и определяем задачи для показа на странице
 	if (isset($_GET['cat'])) {
@@ -79,21 +38,11 @@ if (isset($_SESSION['user'])) {
 		if ($cat_id == 0) {
 			$cat = 0;
 		} else {
-			// Проверяем существование категории
-			$sql = 'SELECT `id` FROM category WHERE id =' .$cat_id. ' AND user_id = '.$user_id;
-			$result = mysqli_query($link, $sql);
 			$cat = $cat_id;
-    		if ($result) {
+			// Проверяем существование категории
+    		if (!empty(checkCategoryByUser($cat_id, $user_id, $link))) {
         		// Забираем задачи юзера для выбранной категории
-				if ($show_complete_tasks == 1) {
-					$sql = 'SELECT * FROM tasks WHERE category_id = '.$cat_id.' AND user_id = '.$user_id;
-				} else {
-					$sql = 'SELECT * FROM tasks WHERE done_date IS NULL AND category_id = '.$cat_id.' AND user_id =' .$user_id;
-				}
-				$result = mysqli_query($link, $sql);
-    			if ($result) {
-        			$task_list = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    			}
+				$sql = $sql.' AND category_id = '.$cat_id;
     		} else {
 				http_response_code(404);
 				die();
@@ -101,13 +50,17 @@ if (isset($_SESSION['user'])) {
 		}
 	}
 	
+	$result = mysqli_query($link, $sql);
+	if ($result) {
+        $task_list = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+	
 	$page_content = include_template('index.php', [
 		'task_list' => $task_list,
 		'show_complete_tasks' => $show_complete_tasks,
 		]);
 				
 	// Обработка кнопки Добавить проект
-
 	if (isset($_GET['add_cat'])) {
 		$show_layout = true;
 		$modal_cat = include_template('add_cat.php', []);	
@@ -136,13 +89,10 @@ if (isset($_SESSION['user'])) {
 				header("Location: /index.php");
 				die();
 			}
-
 		}
-
 	}
 	
 	// Обработка кнопки Добавить задачу
-	
 	if (isset($_GET['add_task'])) {
 		$show_layout = true;
 		$modal_task = include_template('add_task.php', [
@@ -160,11 +110,12 @@ if (isset($_SESSION['user'])) {
 					$errors[$key] = 'Заполните это поле';
 				}
 			}
-
 			if ($_POST['category'] == 'Выберите проект') {
-					$errors['category'] = 'Нужно выбрать проект';
+				$errors['category'] = 'Нужно выбрать проект';
+			}	
+			if (empty(checkCategoryByUser($_POST['category'], $user_id, $link))) {
+				$errors['category'] = 'Вы пытаетесь выбрать несуществующую категорию. Не надо так.';
 			}
-
 
 			if ($_POST['date'] != "") {
 				$task_new['date'] = date('d.m.Y',strtotime($_POST['date']));
@@ -201,7 +152,6 @@ if (isset($_SESSION['user'])) {
 				header("Location: /index.php");
 				die();
 			}
-
 		}
 	}
 
@@ -223,7 +173,7 @@ if (isset($_SESSION['user'])) {
 				}
 			}
 				
-			if (!count($errors) and $user = searchUserByEmail($form['email'], $users)) {
+			if (!count($errors) && $user = searchUserByEmail($form['email'],$link)) {
 				if (password_verify($form['password'], $user['password'])) {
 					$_SESSION['user'] = $user;
 				}
@@ -234,7 +184,6 @@ if (isset($_SESSION['user'])) {
 			else {
 				$errors['email'] = 'Такой пользователь не найден';
 			}
-
 			if (count($errors)) {
 				$modal_login = include_template('auth_form.php', [
 					'form' => $form, 
@@ -251,7 +200,6 @@ if (isset($_SESSION['user'])) {
 		$page_content = include_template('guest.php', []);
 	}
 }
-
 
 // Разлогин
 if (isset($_GET['logout'])) {
@@ -273,7 +221,7 @@ if (isset($_GET['reg'])) {
 				$errors[$field] = 'Это поле надо заполнить';
 			}
 		}
-		if (!count($errors) && $user = searchUserByEmail($form['email'], $users)) {
+		if (!count($errors) && $user = searchUserByEmail($form['email'],$link)) {
 			$errors['email'] = 'Пользователь с таким email уже зарегестрирован';
 		}
 		
@@ -288,8 +236,8 @@ if (isset($_GET['reg'])) {
 				]);
 		}
 		else {
-			$sql = 'INSERT INTO users (email, name, password, registration_date, contacts) VALUES (?, ?, ?, CURDATE(), ?)';
-        	$stmt = db_get_prepare_stmt($link, $sql, [$form['email'], $form['name'], password_hash($form['password'], PASSWORD_DEFAULT), $form['contacts']]);
+			$sql = 'INSERT INTO users (email, name, password, registration_date) VALUES (?, ?, ?, CURDATE())';
+        	$stmt = db_get_prepare_stmt($link, $sql, [$form['email'], $form['name'], password_hash($form['password'], PASSWORD_DEFAULT)]);
         	$res = mysqli_stmt_execute($stmt);
 			header("Location: /index.php?login");
 			die();
@@ -301,12 +249,13 @@ if (isset($_GET['reg'])) {
 $layout_content = include_template('layout.php', [
 	'content' => $page_content,
 	'task_list' => $task_list,
-	'all_tasks' => $all_tasks,
+	'link' => $link,
 	'categories' => $categories, 
 	'title' => 'Дела в порядке - главная',
 	'cat' => $cat,
 	'user' => $user,
 	'show_layout' => $show_layout,
+	'show_complete_tasks' => $show_complete_tasks,
 	'modal_task' => $modal_task,
 	'modal_login' => $modal_login,
 	'modal_cat' => $modal_cat

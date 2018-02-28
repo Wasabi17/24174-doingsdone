@@ -37,12 +37,6 @@
 		<?php endif; ?>
 	</div>
 
-	<div class="form__row">
-		<label class="form__label" for="contacts">Контакты</label>
-		<?php $inputvalue = isset($form['contacts']) ? $form['contacts'] : "";?>
-		<textarea class="form__input" name="contacts" id="contacts"><?=$inputvalue;?></textarea>
-	</div>
-
 	<div class="form__row form__row--controls">
 		<input class="button" type="submit" name="reg" value="Зарегистрироваться">
 	</div>

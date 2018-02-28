@@ -60,7 +60,7 @@
 								}
 						   	?>">
                         	<a class="main-navigation__list-item-link" href="/?cat=0">Все</a>
-                        	<span class="main-navigation__list-item-count"><?=count_tasks($all_tasks,'Все');?></span>
+                        	<span class="main-navigation__list-item-count"><?=count_tasks($categories);?></span>
                         	</li>
                         <?php foreach ($categories as $key => $item): ?>
                         	<li class="main-navigation__list-item 
@@ -70,7 +70,7 @@
 									}
 						   		?>">
                         		<a class="main-navigation__list-item-link" href="/?cat=<?=$item['id']?>"><?=$item['name'];?></a>
-                        		<span class="main-navigation__list-item-count"><?=count_tasks($all_tasks,$item['id']);?></span>
+                        		<span class="main-navigation__list-item-count"><?=$item['COUNT(tasks.id)'];?></span>
                         	</li>
 	                    <?php endforeach; ?>
                     </ul>

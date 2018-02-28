@@ -9,20 +9,15 @@ function include_template($template,$data = []) {
 		}
 	}
 
-// Считаем задачи в проекте
-function count_tasks ($task_list, $category) {
-	$tasks = 0;
-  	if ($category == "Все") {
-    	$tasks = count($task_list); 
-  	} else {
-    	foreach ($task_list as $key => $item) {
-      		if ($item['category_id'] == $category) {
-				$tasks++;
-			}
-    	}
+// Считаем все задачи пользователя
+function count_tasks($categories) {
+	$count = 0;
+	foreach ($categories as $key => $item) {
+		$count = $count + $item['COUNT(tasks.id)'];
 	}
-  	return $tasks;
+	return $count;
 }
+
 //Подсчет времени задачи и проверка на срочность
 function is_important($date) {
 	if ($date != "") { 
@@ -37,6 +32,7 @@ function is_important($date) {
 	}
 }
 
+// Дата задачи должна быть будущая
 function is_future($date) {
 	if ($date != "") {
 		$isfuture = false;
@@ -50,16 +46,45 @@ function is_future($date) {
 	}
 }
 
-function searchUserByEmail($email, $users) {
-	$result = null;
-	foreach ($users as $user) {
-		if ($user['email'] == $email) {
-			$result = $user;
-			break;
-		}
-	}
+// Поиск пользователя по мылу
+function searchUserByEmail($email,$link) {
+	$user = null;
+	$sql = "SELECT * FROM users WHERE email = '$email'";
+	$result = mysqli_query($link, $sql);
+    if ($result) {
+    	$user = mysqli_fetch_assoc($result);
+    }
+	return $user;
+}
 
-	return $result;
+// Поиск категорий пользователя и подсчет задач в категориях
+function searchCategoriesByUser($user_id,$show_complete_tasks,$link) {
+	$categories = [];
+	$sql = 'SELECT category.id, category.name, COUNT(tasks.id) FROM category LEFT JOIN tasks ON category.id = tasks.category_id WHERE category.user_id = '.$user_id;
+	if ($show_complete_tasks == 0) {
+		$sql = $sql.' AND done_date IS NULL GROUP BY category.id';
+	}
+	else {
+		$sql = $sql.' GROUP BY category.id';
+	}
+	$result = mysqli_query($link, $sql);
+    if ($result) {
+        $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+	
+	return $categories;
+}
+
+// Проверка существования категории пользователя
+function checkCategoryByUser($cat_id, $user_id, $link) {
+	$rows = 0;
+	$cat_id = intval($cat_id);
+	$sql= 'SELECT id FROM category WHERE id = '.$cat_id.' AND user_id = '.$user_id;
+	$result = mysqli_query($link, $sql);
+	if ($result) {
+		$rows = mysqli_num_rows($result);
+    }
+	return $rows;
 }
 
 /**
@@ -108,7 +133,6 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
 
 function show_error($page_content, $error) {
     $page_content = include_template('error.php', ['error' => $error]);
-	$show_layout = false;
 	$layout_content = include_template('layout.php', [
 	'content' => $page_content,
 	'title' => 'Дела не в порядке',
