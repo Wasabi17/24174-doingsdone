@@ -15,7 +15,13 @@
 	</nav>
 
 	<label class="checkbox">
-    	<a href="?show_completed">
+   		<?php if (isset($_GET['cat'])) { 
+			$urlParams = '?cat='.$_GET['cat'].'&show_completed'; 
+			} else { 
+			$urlParams = '?show_completed'; 
+			} 
+		?>
+    	<a href="<?=$urlParams;?>">
       		<input class="checkbox__input visually-hidden" type="checkbox" 
       		<?php if ($show_complete_tasks == 1) { 
 				print ("checked"); 

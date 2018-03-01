@@ -59,7 +59,7 @@
 									print ("main-navigation__list-item--active"); 
 								}
 						   	?>">
-                        	<a class="main-navigation__list-item-link" href="/?cat=0">Все</a>
+                        	<a class="main-navigation__list-item-link" href="?cat=0">Все</a>
                         	<span class="main-navigation__list-item-count"><?=count_tasks($categories);?></span>
                         	</li>
                         <?php foreach ($categories as $key => $item): ?>
@@ -69,7 +69,7 @@
 										print ("main-navigation__list-item--active"); 
 									}
 						   		?>">
-                        		<a class="main-navigation__list-item-link" href="/?cat=<?=$item['id']?>"><?=$item['name'];?></a>
+                        		<a class="main-navigation__list-item-link" href="?cat=<?=$item['id']?>"><?=$item['name'];?></a>
                         		<span class="main-navigation__list-item-count"><?=$item['COUNT(tasks.id)'];?></span>
                         	</li>
 	                    <?php endforeach; ?>
