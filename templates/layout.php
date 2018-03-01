@@ -40,8 +40,7 @@
                         <a href="?logout">Выйти</a>
                     </div>
                 </div>
-                <?php else :?>
-                <a class="main-header__side-item button button--transparent" href="?login">Войти</a> 
+                
                 <?php endif; ?>
             </div>
         </header>
@@ -54,22 +53,36 @@
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
                         <!-- Вывод категорий-->
-                        <?php foreach ($categories as $key => $value): ?>
+                        <li class="main-navigation__list-item 
+                           	<?php 
+								if ($cat == 0) { 
+									print ("main-navigation__list-item--active"); 
+								}
+						   	?>">
+                        	<a class="main-navigation__list-item-link" href="/?cat=0">Все</a>
+                        	<span class="main-navigation__list-item-count"><?=count_tasks($categories);?></span>
+                        	</li>
+                        <?php foreach ($categories as $key => $item): ?>
                         	<li class="main-navigation__list-item 
                            		<?php 
-									if ($key == $cat) { 
+									if ($item['id'] == $cat) { 
 										print ("main-navigation__list-item--active"); 
 									}
 						   		?>">
-                        		<a class="main-navigation__list-item-link" href="/?cat=<?=$key;?>"><?=$value;?></a>
-                        		<span class="main-navigation__list-item-count"><?=count_tasks($task_list,$value);?></span>
+                        		<a class="main-navigation__list-item-link" href="/?cat=<?=$item['id']?>"><?=$item['name'];?></a>
+                        		<span class="main-navigation__list-item-count"><?=$item['COUNT(tasks.id)'];?></span>
                         	</li>
 	                    <?php endforeach; ?>
                     </ul>
                 </nav>
 
-                <a class="button button--transparent button--plus content__side-button" href="">Добавить проект</a>
+                <a class="button button--transparent button--plus content__side-button" href="/?add_cat">Добавить проект</a>
             </section>
+            <?php else: ?>
+            <section class="content__side">
+          		<p class="content__side-info">Если у вас уже есть аккаунт, авторизуйтесь на сайте</p>
+          		<a class="button button--transparent content__side-button" href="index.php?login">Войти</a>
+        	</section>
 			<?php endif; ?>
             <main class="content__main">
                 <?=$content;?>
@@ -79,6 +92,7 @@
 </div>
 <?=$modal_task;?>
 <?=$modal_login;?>
+<?=$modal_cat;?>
 <footer class="main-footer">
     <div class="container">
         <div class="main-footer__copyright">
