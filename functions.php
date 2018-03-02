@@ -87,6 +87,21 @@ function checkCategoryByUser($cat_id, $user_id, $link) {
 	return $rows;
 }
 
+//Формирование урла с несколькими параметрами
+function getUrl($param) {
+	$urlParams='/';
+	if (empty($param)) {
+		if (isset($_GET['cat'])) { 
+			$urlParams='?cat='.$_GET['cat'];
+		}  
+	} else {
+		$urlParams = '?'.$param; 
+		if (isset($_GET['cat'])) { 
+			$urlParams='?cat='.$_GET['cat'].'&'.$param;
+		}
+	}
+	return $urlParams;
+}
 /**
  * Создает подготовленное выражение на основе готового SQL запроса и переданных данных
  *

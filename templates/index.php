@@ -8,20 +8,14 @@
 
 <div class="tasks-controls">
 	<nav class="tasks-switch">
-		<a href="/" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
-		<a href="/" class="tasks-switch__item">Повестка дня</a>
-		<a href="/" class="tasks-switch__item">Завтра</a>
-		<a href="/" class="tasks-switch__item">Просроченные</a>
+		<a href="<?=getUrl('');?>" class="tasks-switch__item <?php (!isset($_GET['today']) && !isset($_GET['tomorrow']) && !isset($_GET['expired'])) ? print 'tasks-switch__item--active' : '';?>">Все задачи</a>
+		<a href="<?=getUrl('today');?>" class="tasks-switch__item <?php (isset($_GET['today'])) ? print 'tasks-switch__item--active' : '';?>">Повестка дня</a>
+		<a href="<?=getUrl('tomorrow');?>" class="tasks-switch__item <?php (isset($_GET['tomorrow'])) ? print 'tasks-switch__item--active' : '';?>">Завтра</a>
+		<a href="<?=getUrl('expired');?>" class="tasks-switch__item <?php (isset($_GET['expired'])) ? print 'tasks-switch__item--active' : '';?>">Просроченные</a>
 	</nav>
-
+	
 	<label class="checkbox">
-   		<?php if (isset($_GET['cat'])) { 
-			$urlParams = '?cat='.$_GET['cat'].'&show_completed'; 
-			} else { 
-			$urlParams = '?show_completed'; 
-			} 
-		?>
-    	<a href="<?=$urlParams;?>">
+    	<a href="<?=getUrl('show_completed');?>">
       		<input class="checkbox__input visually-hidden" type="checkbox" 
       		<?php if ($show_complete_tasks == 1) { 
 				print ("checked"); 
@@ -39,15 +33,16 @@
 	<?php 
 		if ($item['done_date'] !="") {
 			print ('task--completed'); 
-		} 
-		if (is_important($item['deadline_date'])) {
-			print ('task--important'); 
-		} 
+		} else {
+			if (is_important($item['deadline_date'])) {
+				print ('task--important'); 
+			}
+		}
 	?>">
 		<td class="task__select">
 			<label class="checkbox task__checkbox">
         		<input class="checkbox__input visually-hidden" type="checkbox" checked>
-        		<a href="/"><span class="checkbox__text"><?=$item['name'];?></span></a>
+        		<a href="?done=<?=$item['id'];?>"><span class="checkbox__text"><?=$item['name'];?></span></a>
       		</label>
 		</td>
 

@@ -16,12 +16,33 @@ if (isset($_SESSION['user'])) {
 	$expire = strtotime("+30 days");
 	$path = "/";
 	
-	$show_complete_tasks = isset($_COOKIE['showcompl']) ? $_COOKIE['showcompl'] : 0; //Если есть кука, то записываем ее, если нет дефолтный ноль
+	$show_complete_tasks = isset($_COOKIE['showcompl']) ? $_COOKIE['showcompl'] : 0; // Если есть кука, то записываем ее, если нет дефолтный ноль
 
 	if (isset($_GET['show_completed'])) {
-  		$show_complete_tasks = !$show_complete_tasks; //Инвертируем значение
+  		$show_complete_tasks = !$show_complete_tasks; // Инвертируем значение
 		setcookie($show_complete_tasks_cookie, $show_complete_tasks, $expire, $path);
 	}
+	
+	
+	
+	// Обработка ссылки выполнения задачи
+	if (isset($_GET['done'])) {
+		$task_id = intval($_GET['done']);
+		$sql = 'SELECT done_date FROM tasks WHERE id = '.$task_id.' AND user_id = '.$user_id;
+		$result = mysqli_query($link, $sql);
+		if ($result) {
+			$row = mysqli_fetch_assoc($result);
+			if (is_null($row['done_date'])) {
+				$sql= 'UPDATE tasks SET done_date = CURDATE() WHERE id = '.$task_id.' AND user_id = '.$user_id;
+			} else {
+				$sql= 'UPDATE tasks SET done_date = null WHERE id = '.$task_id.' AND user_id = '.$user_id;
+			}
+		}
+		$result = mysqli_query($link, $sql);
+		header("Location: /index.php");
+		
+	}
+	
 	
 	// Забираем из БД категории юзера c подсчетом задач
     $categories = searchCategoriesByUser($user_id,$show_complete_tasks,$link);
@@ -50,6 +71,20 @@ if (isset($_SESSION['user'])) {
 		}
 	}
 	
+	//Фильтры по дате
+	if (isset($_GET['today'])) {
+		$sql = $sql.' AND deadline_date = CURDATE()';
+	}
+	
+	if (isset($_GET['tomorrow'])) {
+		$sql = $sql.' AND deadline_date = DATE_ADD(CURDATE(), INTERVAL 1 DAY)';
+	}
+	
+	if (isset($_GET['expired'])) {
+		$sql = $sql.' AND deadline_date < CURDATE()';
+	}
+	
+	//Запрашиваем задачи из БД 
 	$result = mysqli_query($link, $sql);
 	if ($result) {
         $task_list = mysqli_fetch_all($result, MYSQLI_ASSOC);
