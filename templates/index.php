@@ -8,14 +8,14 @@
 
 <div class="tasks-controls">
 	<nav class="tasks-switch">
-		<a href="<?=getUrl('');?>" class="tasks-switch__item <?php (!isset($_GET['today']) && !isset($_GET['tomorrow']) && !isset($_GET['expired'])) ? print 'tasks-switch__item--active' : '';?>">Все задачи</a>
-		<a href="<?=getUrl('today');?>" class="tasks-switch__item <?php (isset($_GET['today'])) ? print 'tasks-switch__item--active' : '';?>">Повестка дня</a>
-		<a href="<?=getUrl('tomorrow');?>" class="tasks-switch__item <?php (isset($_GET['tomorrow'])) ? print 'tasks-switch__item--active' : '';?>">Завтра</a>
-		<a href="<?=getUrl('expired');?>" class="tasks-switch__item <?php (isset($_GET['expired'])) ? print 'tasks-switch__item--active' : '';?>">Просроченные</a>
+		<a href="<?=isset($_GET['cat'])? '?cat='.$_GET['cat']: '/';?>" class="tasks-switch__item <?=(!isset($_GET['filter'])) ? 'tasks-switch__item--active' : '';?>">Все задачи</a>
+		<a href="<?=isset($_GET['cat'])? '?cat='.$_GET['cat'] .'&filter=today' : '?filter=today';?>" class="tasks-switch__item <?=(isset($_GET['filter']) && $_GET['filter'] == 'today') ? 'tasks-switch__item--active' : '';?>">Повестка дня</a>
+		<a href="<?=isset($_GET['cat'])? '?cat='.$_GET['cat'] .'&filter=tomorrow' : '?filter=tomorrow';?>" class="tasks-switch__item <?=(isset($_GET['filter']) && $_GET['filter'] == 'tomorrow') ? 'tasks-switch__item--active' : '';?>">Завтра</a>
+		<a href="<?=isset($_GET['cat'])? '?cat='.$_GET['cat'] .'&filter=expired' : '?filter=expired';?>" class="tasks-switch__item <?=(isset($_GET['filter']) && $_GET['filter'] == 'expired') ? 'tasks-switch__item--active' : '';?>">Просроченные</a>
 	</nav>
 	
 	<label class="checkbox">
-    	<a href="<?=getUrl('show_completed');?>">
+    	<a href="<?=isset($_GET['cat'])? '?cat='.$_GET['cat'] .'&show_completed' : '?show_completed';?>">
       		<input class="checkbox__input visually-hidden" type="checkbox" 
       		<?php if ($show_complete_tasks == 1) { 
 				print ("checked"); 

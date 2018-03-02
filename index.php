@@ -72,18 +72,19 @@ if (isset($_SESSION['user'])) {
 	}
 	
 	//Фильтры по дате
-	if (isset($_GET['today'])) {
-		$sql = $sql.' AND deadline_date = CURDATE()';
+	if (isset($_GET['filter'])) {
+		switch ($_GET['filter']) {
+			case 'today': 
+				$sql = $sql.' AND deadline_date = CURDATE()';
+				break;
+			case 'tomorrow': 
+				$sql = $sql.' AND deadline_date = DATE_ADD(CURDATE(), INTERVAL 1 DAY)';
+				break;
+			case 'expired':
+				$sql = $sql.' AND deadline_date < CURDATE()';
+				break;
+		}
 	}
-	
-	if (isset($_GET['tomorrow'])) {
-		$sql = $sql.' AND deadline_date = DATE_ADD(CURDATE(), INTERVAL 1 DAY)';
-	}
-	
-	if (isset($_GET['expired'])) {
-		$sql = $sql.' AND deadline_date < CURDATE()';
-	}
-	
 	//Запрашиваем задачи из БД 
 	$result = mysqli_query($link, $sql);
 	if ($result) {
