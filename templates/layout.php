@@ -35,7 +35,7 @@
                     </div>
 
                     <div class="user-menu__data">
-                        <p><?=$user['name'];?></p>
+                        <p><?=htmlspecialchars($user['name']);?></p>
 
                         <a href="?logout">Выйти</a>
                     </div>
@@ -69,7 +69,7 @@
 										print ("main-navigation__list-item--active"); 
 									}
 						   		?>">
-                        		<a class="main-navigation__list-item-link" href="?cat=<?=$item['id']?>"><?=$item['name'];?></a>
+                        		<a class="main-navigation__list-item-link" href="?cat=<?=$item['id']?>"><?=htmlspecialchars($item['name']);?></a>
                         		<span class="main-navigation__list-item-count"><?=$item['COUNT(tasks.id)'];?></span>
                         	</li>
 	                    <?php endforeach; ?>

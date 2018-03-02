@@ -42,7 +42,7 @@
 		<td class="task__select">
 			<label class="checkbox task__checkbox">
         		<input class="checkbox__input visually-hidden" type="checkbox" checked>
-        		<a href="?done=<?=$item['id'];?>"><span class="checkbox__text"><?=$item['name'];?></span></a>
+        		<a href="?done=<?=$item['id'];?>"><span class="checkbox__text"><?=htmlspecialchars($item['name']);?></span></a>
       		</label>
 		</td>
 

@@ -23,8 +23,6 @@ if (isset($_SESSION['user'])) {
 		setcookie($show_complete_tasks_cookie, $show_complete_tasks, $expire, $path);
 	}
 	
-	
-	
 	// Обработка ссылки выполнения задачи
 	if (isset($_GET['done'])) {
 		$task_id = intval($_GET['done']);
