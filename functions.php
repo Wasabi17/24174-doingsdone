@@ -60,13 +60,7 @@ function searchUserByEmail($email,$link) {
 // Поиск категорий пользователя и подсчет задач в категориях
 function searchCategoriesByUser($user_id,$show_complete_tasks,$link) {
 	$categories = [];
-	$sql = 'SELECT category.id, category.name, COUNT(tasks.id) FROM category LEFT JOIN tasks ON category.id = tasks.category_id WHERE category.user_id = '.$user_id;
-	if ($show_complete_tasks == 0) {
-		$sql = $sql.' AND done_date IS NULL GROUP BY category.id';
-	}
-	else {
-		$sql = $sql.' GROUP BY category.id';
-	}
+	$sql = 'SELECT category.id, category.name, COUNT(tasks.id) FROM category LEFT JOIN tasks ON category.id = tasks.category_id WHERE category.user_id = '.$user_id.' GROUP BY category.id';
 	$result = mysqli_query($link, $sql);
     if ($result) {
         $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
